@@ -1,0 +1,32 @@
+{
+  "name": "lobster-cli",
+  "version": "0.1.0",
+  "description": "LangGraph-focused CLI toolkit",
+  "bin": {
+    "lobster-cli": "dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsup src/index.ts --format esm --dts",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "keywords": ["langgraph", "cli", "workflow"],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "ora": "^8.0.1",
+    "picocolors": "^1.1.0",
+    "yaml": "^2.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "eslint": "^9.19.0",
+    "tsx": "^4.19.2",
+    "tsup": "^8.2.4",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.9"
+  }
+}

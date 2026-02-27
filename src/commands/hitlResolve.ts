@@ -6,8 +6,8 @@ export function cmdHitlResolve() {
     .argument("<thread_id>")
     .requiredOption("--action <approve|reject|revise>")
     .description("Resolve a HITL task for a thread (stub)")
-    .action((threadId: string, opts: { action: "approve" | "reject" | "revise" }) => {
-      const tasks = listHitlTasks();
+    .action(async (threadId: string, opts: { action: "approve" | "reject" | "revise" }) => {
+      const tasks = await listHitlTasks();
       const idx = tasks.findIndex((t) => t.thread_id === threadId && t.status === "pending");
       if (idx === -1) {
         process.stderr.write(`no pending task for thread: ${threadId}\n`);
@@ -15,7 +15,7 @@ export function cmdHitlResolve() {
         return;
       }
       tasks[idx] = { ...tasks[idx], status: "resolved", action: opts.action };
-      writeHitlTasks(tasks);
+      await writeHitlTasks(tasks);
       process.stdout.write(`OK: resolved ${threadId} -> ${opts.action}\n`);
     });
 }

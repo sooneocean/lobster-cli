@@ -8,4 +8,9 @@ export const defaultCheckpointer: CheckpointerConfig = {
   path: "./.checkpoints.sqlite"
 };
 
-// TODO: bind to LangGraph checkpointer implementation.
+/**
+ * Wire your LangGraph checkpointer here.
+ * Example (pseudo):
+ *  const saver = cfg.kind === "sqlite" ? new SqliteSaver(cfg.path) : new PostgresSaver(cfg.url)
+ *  graph.compile({ checkpointer: saver })
+ */

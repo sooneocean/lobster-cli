@@ -26,6 +26,23 @@ lobster-cli state mutate THREAD_ID --apply patch.json
 lobster-cli trace snipe THREAD_ID --cost
 ```
 
+## Durable Store
+
+選擇後端：
+
+```bash
+# JSON (default)
+export LOBSTER_STORE=json
+
+# SQLite
+export LOBSTER_STORE=sqlite
+export LOBSTER_SQLITE_PATH=~/.lobster/lobster.sqlite
+
+# Postgres
+export LOBSTER_STORE=postgres
+export LOBSTER_PG_URL=postgres://user:pass@localhost:5432/lobster
+```
+
 ## Layout
 
 - `src/commands/*` CLI commands

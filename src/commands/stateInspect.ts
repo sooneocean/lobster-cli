@@ -5,8 +5,8 @@ export function cmdStateInspect() {
   return new Command("inspect")
     .argument("<thread_id>")
     .description("Inspect durable execution state (stub)")
-    .action((threadId: string) => {
-      const t = readThread(threadId);
+    .action(async (threadId: string) => {
+      const t = await readThread(threadId);
       if (!t) {
         process.stderr.write(`not found: ${threadId}\n`);
         process.exitCode = 1;

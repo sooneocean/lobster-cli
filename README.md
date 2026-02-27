@@ -43,6 +43,23 @@ export LOBSTER_STORE=postgres
 export LOBSTER_PG_URL=postgres://user:pass@localhost:5432/lobster
 ```
 
+## LangGraph Checkpointer (JS)
+
+模板已內建 `createCheckpointer()`：
+
+```ts
+import { createCheckpointer, defaultCheckpointer } from "./checkpointer";
+const checkpointer = await createCheckpointer(defaultCheckpointer);
+```
+
+依賴：
+
+```bash
+npm i @langchain/langgraph
+```
+
+若你的套件路徑不同，請調整 `templates/workflow/checkpointer.ts` 內的 import。
+
 ## Layout
 
 - `src/commands/*` CLI commands

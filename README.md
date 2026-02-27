@@ -71,6 +71,19 @@ import { createHitlTask } from "./hitl";
 
 你可把 HITL 任務持久化到共享存儲，讓 `lobster-cli hitl pending/resolve` 直接驅動。
 
+## Graph Render (from LangGraph)
+
+`lobster-cli graph render` 會先讀取 `graph.json`：
+
+```json
+{
+  "nodes": [{"id":"entry"},{"id":"review"}],
+  "edges": [{"from":"entry","to":"review"}]
+}
+```
+
+你可在 workflow 中輸出此檔，取得真實 LangGraph 結構。
+
 ## Layout
 
 - `src/commands/*` CLI commands

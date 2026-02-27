@@ -5,19 +5,36 @@ import http from "node:http";
 import chokidar from "chokidar";
 import { storageDir, ensurePosix } from "../lib/paths.js";
 
+type GraphSchema = {
+  nodes: Array<{ id: string; label?: string }>;
+  edges: Array<{ from: string; to: string }>;
+};
+
 function listNodes(wfDir: string) {
   const nodesDir = path.join(wfDir, "nodes");
   if (!fs.existsSync(nodesDir)) return [] as string[];
   return fs.readdirSync(nodesDir).filter((f) => f.endsWith(".ts")).map((f) => path.parse(f).name);
 }
 
-function renderMermaid(nodes: string[]) {
-  if (nodes.length === 0) return "graph TD\n  Start-->End";
-  const lines = ["graph TD", "  Start-->" + nodes[0]];
-  for (let i = 0; i < nodes.length - 1; i++) {
-    lines.push(`  ${nodes[i]}-->${nodes[i + 1]}`);
+function readGraphSchema(wfDir: string): GraphSchema | null {
+  const json = path.join(wfDir, "graph.json");
+  if (!fs.existsSync(json)) return null;
+  return JSON.parse(fs.readFileSync(json, "utf8"));
+}
+
+function renderMermaid(schema: GraphSchema | null, nodesFallback: string[]) {
+  if (schema && schema.nodes?.length) {
+    const lines = ["graph TD"];
+    for (const n of schema.nodes) lines.push(`  ${n.id}[${n.label ?? n.id}]`);
+    for (const e of schema.edges || []) lines.push(`  ${e.from}-->${e.to}`);
+    return lines.join("\n");
   }
-  lines.push(`  ${nodes[nodes.length - 1]}-->End`);
+  if (nodesFallback.length === 0) return "graph TD\n  Start-->End";
+  const lines = ["graph TD", "  Start-->" + nodesFallback[0]];
+  for (let i = 0; i < nodesFallback.length - 1; i++) {
+    lines.push(`  ${nodesFallback[i]}-->${nodesFallback[i + 1]}`);
+  }
+  lines.push(`  ${nodesFallback[nodesFallback.length - 1]}-->End`);
   return lines.join("\n");
 }
 
@@ -53,8 +70,9 @@ export function cmdGraphRender() {
       const outFile = path.join(outDir, `${workflowName}.html`);
 
       const write = () => {
+        const schema = readGraphSchema(wfDir);
         const nodes = listNodes(wfDir);
-        const html = buildHtml(renderMermaid(nodes));
+        const html = buildHtml(renderMermaid(schema, nodes));
         fs.writeFileSync(outFile, html);
       };
 

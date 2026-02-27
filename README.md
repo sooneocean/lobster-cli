@@ -60,6 +60,17 @@ npm i @langchain/langgraph
 
 若你的套件路徑不同，請調整 `templates/workflow/checkpointer.ts` 內的 import。
 
+## HITL (interrupt)
+
+模板包含 `hitl.ts`：
+
+```ts
+import { createHitlTask } from "./hitl";
+// interrupt(createHitlTask(threadId, "manager_review", payload))
+```
+
+你可把 HITL 任務持久化到共享存儲，讓 `lobster-cli hitl pending/resolve` 直接驅動。
+
 ## Layout
 
 - `src/commands/*` CLI commands

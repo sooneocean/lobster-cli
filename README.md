@@ -19,7 +19,7 @@ lobster-cli state inspect THREAD_ID
 lobster-cli state rollback THREAD_ID --step review
 lobster-cli hitl pending
 lobster-cli hitl resolve THREAD_ID --action approve
-lobster-cli export procurement --target skill
+lobster-cli export procurement --target skill --zip
 lobster-cli graph render procurement --live
 lobster-cli chaos spawn procurement --workers 500 --mock erp
 lobster-cli state mutate THREAD_ID --apply patch.json

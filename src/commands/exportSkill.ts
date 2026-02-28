@@ -7,8 +7,9 @@ export function cmdExport() {
   return new Command("export")
     .argument("<workflow_name>")
     .requiredOption("--target <skill>")
-    .description("Export workflow as a 'skill' bundle (template)")
-    .action((workflowName: string, opts: { target: string }) => {
+    .option("--zip", "also generate .zip bundle")
+    .description("Export workflow as a 'skill' bundle")
+    .action(async (workflowName: string, opts: { target: string; zip?: boolean }) => {
       if (opts.target !== "skill") throw new Error("only --target skill supported");
       const outDir = path.resolve(process.cwd(), `${workflowName}.skill`);
       fse.removeSync(outDir);
@@ -24,12 +25,26 @@ export function cmdExport() {
             name: workflowName,
             entry: "graph.ts",
             description: "Exported LangGraph workflow",
-            runtime: { language: "ts" }
+            runtime: { language: "ts" },
+            inputs: [{ name: "thread_id" }, { name: "input" }],
+            outputs: [{ name: "output" }]
           },
           null,
           2
         )
       );
+      // copy workflow files if present
+      const srcDir = path.resolve(process.cwd(), workflowName);
+      if (fs.existsSync(srcDir)) {
+        fse.copySync(srcDir, path.join(outDir, "workflow"));
+      }
+      if (opts.zip) {
+        const { createGzip } = await import("node:zlib");
+        const { pipeline } = await import("node:stream/promises");
+        const tar = await import("tar");
+        const zipPath = `${outDir}.tgz`;
+        await pipeline(tar.c({ gzip: true, cwd: path.dirname(outDir) }, [path.basename(outDir)]), fs.createWriteStream(zipPath));
+      }
       process.stdout.write(`OK: exported -> ${path.relative(process.cwd(), outDir)}\n`);
     });
 }

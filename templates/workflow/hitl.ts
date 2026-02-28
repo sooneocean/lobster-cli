@@ -1,5 +1,6 @@
 // HITL helper template
 // Wire this into your graph nodes when you call interrupt().
+// This version integrates with lobster-cli by persisting tasks to the shared store.
 
 export type HitlAction = "approve" | "reject" | "revise";
 
@@ -24,5 +25,15 @@ export function createHitlTask(thread_id: string, node: string, payload?: unknow
   };
 }
 
-// TODO: Persist tasks (e.g., via your checkpointer DB or a shared store)
-// and let lobster-cli hitl pending/resolve operate on that store.
+import { upsertHitlTask, waitForHitlResolution } from "./lobster_store";
+
+export async function hitlInterruptPersist(thread_id: string, node: string, payload?: unknown) {
+  const task = createHitlTask(thread_id, node, payload);
+  await upsertHitlTask(task);
+  // you still need to call interrupt() in your LangGraph node.
+  return task;
+}
+
+export async function hitlAwaitAction(taskId: string) {
+  return waitForHitlResolution(taskId);
+}

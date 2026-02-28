@@ -69,7 +69,20 @@ import { createHitlTask } from "./hitl";
 // interrupt(createHitlTask(threadId, "manager_review", payload))
 ```
 
-你可把 HITL 任務持久化到共享存儲，讓 `lobster-cli hitl pending/resolve` 直接驅動。
+HITL 任務會寫入共享 durable store，`lobster-cli hitl pending/resolve` 可直接驅動。
+
+Workflow 端：
+
+```ts
+import { hitlInterruptPersist, hitlAwaitAction } from "./hitl";
+
+// in node:
+const task = await hitlInterruptPersist(state.thread_id, "manager_review", { amount: 123 });
+// interrupt(task)  // LangGraph
+
+// on resume:
+const action = await hitlAwaitAction(task.id);
+```
 
 ## Graph Render (from LangGraph)
 

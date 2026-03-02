@@ -10,7 +10,8 @@
     "dev": "tsx src/index.ts",
     "build": "tsup src/index.ts --format esm --dts",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "release:tag": "node ./scripts/release-tag.mjs"
   },
   "keywords": ["langgraph", "cli", "workflow"],
   "license": "Apache-2.0",

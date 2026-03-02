@@ -106,6 +106,14 @@ lobster-cli graph render approval --module dist/graph.schema.js
 
 你可在 workflow 中輸出此檔，取得真實 LangGraph 結構。
 
+## Release
+
+1. 更新 version：`npm version patch|minor|major`
+2. 產生 tag：`npm run release:tag`
+3. GitHub Action 會自動發佈 npm 與 GitHub Release
+
+需要設定 GitHub Secret：`NPM_TOKEN`
+
 ## Layout
 
 - `src/commands/*` CLI commands

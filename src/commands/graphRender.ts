@@ -22,6 +22,17 @@ function readGraphSchema(wfDir: string): GraphSchema | null {
   return JSON.parse(fs.readFileSync(json, "utf8"));
 }
 
+async function readGraphFromModule(modPath?: string): Promise<GraphSchema | null> {
+  if (!modPath) return null;
+  const abs = path.isAbsolute(modPath) ? modPath : path.resolve(process.cwd(), modPath);
+  if (!fs.existsSync(abs)) throw new Error(`module not found: ${abs}`);
+  const mod = await import(abs);
+  if (mod.graphSchema) return mod.graphSchema as GraphSchema;
+  if (typeof mod.getGraphSchema === "function") return (await mod.getGraphSchema()) as GraphSchema;
+  if (mod.graph && mod.graph.nodes && mod.graph.edges) return mod.graph as GraphSchema;
+  return null;
+}
+
 function renderMermaid(schema: GraphSchema | null, nodesFallback: string[]) {
   if (schema && schema.nodes?.length) {
     const lines = ["graph TD"];
@@ -60,8 +71,9 @@ export function cmdGraphRender() {
     .argument("<workflow_name>")
     .option("--live", "watch mode")
     .option("--port <n>", "dev server port", (v) => parseInt(v, 10), 7731)
+    .option("--module <path>", "import a JS module that exports graphSchema")
     .description("Render graph to browser (mermaid)")
-    .action((workflowName: string, opts: { live?: boolean; port: number }) => {
+    .action(async (workflowName: string, opts: { live?: boolean; port: number; module?: string }) => {
       const wfDir = path.resolve(process.cwd(), workflowName);
       if (!fs.existsSync(wfDir)) throw new Error(`workflow not found: ${wfDir}`);
 
@@ -69,14 +81,15 @@ export function cmdGraphRender() {
       fs.mkdirSync(outDir, { recursive: true });
       const outFile = path.join(outDir, `${workflowName}.html`);
 
-      const write = () => {
-        const schema = readGraphSchema(wfDir);
+      const write = async () => {
+        const modSchema = await readGraphFromModule(opts.module);
+        const schema = modSchema ?? readGraphSchema(wfDir);
         const nodes = listNodes(wfDir);
         const html = buildHtml(renderMermaid(schema, nodes));
         fs.writeFileSync(outFile, html);
       };
 
-      write();
+      await write();
 
       if (!opts.live) {
         process.stdout.write(`OK: ${ensurePosix(outFile)}\n`);
@@ -92,11 +105,7 @@ export function cmdGraphRender() {
       });
 
       chokidar.watch(wfDir, { ignoreInitial: true }).on("all", () => {
-        try {
-          write();
-        } catch (e) {
-          process.stderr.write(String(e) + "\n");
-        }
+        write().catch((e) => process.stderr.write(String(e) + "\n"));
       });
     });
 }

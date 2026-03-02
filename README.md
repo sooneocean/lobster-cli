@@ -88,7 +88,11 @@ const action = await hitlAwaitAction(task.id);
 
 ## Graph Render (from LangGraph)
 
-`lobster-cli graph render` 會先讀取 `graph.json`：
+`lobster-cli graph render` 會先讀取 `graph.json`，或指定 `--module` 直接 import JS：
+
+```bash
+lobster-cli graph render approval --module dist/graph.schema.js
+```
 
 ```json
 {

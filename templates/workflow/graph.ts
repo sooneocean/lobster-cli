@@ -11,9 +11,11 @@ export async function run(__state: __WORKFLOW__State): Promise<__WORKFLOW__State
   // const graph = new StateGraph<__WORKFLOW__State>() ...
   // graph.compile({ checkpointer })
 
-  // Example HITL hook (pseudo):
-  // const task = createHitlTask(__state.thread_id, "manager_review", { reason: "needs approval" });
-  // interrupt(task)  // from LangGraph JS
+  // Example HITL hook (LangGraph JS):
+  // import { interrupt, Command } from "@langchain/langgraph";
+  // const task = await hitlInterruptPersist(__state.thread_id, "manager_review", { reason: "needs approval" });
+  // const response = interrupt(task);
+  // if (response instanceof Command) return response; // graph will pause here
 
   let s = __state;
   s = await entryNode(s);

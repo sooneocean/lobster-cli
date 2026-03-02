@@ -75,10 +75,12 @@ Workflow 端：
 
 ```ts
 import { hitlInterruptPersist, hitlAwaitAction } from "./hitl";
+import { interrupt, Command } from "@langchain/langgraph";
 
 // in node:
 const task = await hitlInterruptPersist(state.thread_id, "manager_review", { amount: 123 });
-// interrupt(task)  // LangGraph
+const response = interrupt(task);
+if (response instanceof Command) return response; // pause
 
 // on resume:
 const action = await hitlAwaitAction(task.id);

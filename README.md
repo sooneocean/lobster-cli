@@ -17,6 +17,9 @@ lobster-cli --help
 lobster-cli init procurement
 lobster-cli state inspect THREAD_ID
 lobster-cli state rollback THREAD_ID --step review
+# use LangGraph adapter module
+lobster-cli state inspect THREAD_ID --module dist/langgraph.adapter.js
+lobster-cli state rollback THREAD_ID --step review --module dist/langgraph.adapter.js
 lobster-cli hitl pending
 lobster-cli hitl resolve THREAD_ID --action approve
 lobster-cli export procurement --target skill --zip

@@ -1,12 +1,27 @@
 import { Command } from "commander";
+import path from "node:path";
 import { readThread, writeThread } from "../lib/store.js";
+
+async function importPath(p: string) {
+  const abs = path.isAbsolute(p) ? p : path.resolve(process.cwd(), p);
+  return abs;
+}
 
 export function cmdStateRollback() {
   return new Command("rollback")
     .argument("<thread_id>")
     .requiredOption("--step <step_name>", "checkpoint step name")
-    .description("Rollback to a prior checkpoint (stub)")
-    .action(async (threadId: string, opts: { step: string }) => {
+    .description("Rollback to a prior checkpoint")
+    .option("--module <path>", "import adapter module for LangGraph checkpointer")
+    .action(async (threadId: string, opts: { step: string; module?: string }) => {
+      if (opts.module) {
+        const modPath = await importPath(opts.module);
+        const mod = await import(modPath);
+        if (typeof mod.rollbackThread !== "function") throw new Error("adapter missing rollbackThread()");
+        await mod.rollbackThread(threadId, opts.step);
+        process.stdout.write(`OK: rolled back ${threadId} -> ${opts.step}\n`);
+        return;
+      }
       const t = await readThread(threadId);
       if (!t) {
         process.stderr.write(`not found: ${threadId}\n`);

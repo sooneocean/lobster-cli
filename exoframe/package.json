@@ -1,0 +1,19 @@
+{
+  "name": "exoframe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ExoFrame – wrap models into executable task agents",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build --workspaces --if-present",
+    "typecheck": "tsc --build packages/core/tsconfig.json packages/openclaw-plugin/tsconfig.json --noEmit 2>&1 || tsc -p packages/core/tsconfig.json --noEmit && tsc -p packages/openclaw-plugin/tsconfig.json --noEmit",
+    "plugin:pack": "node scripts/pack-plugin.mjs",
+    "plugin:link": "cd packages/openclaw-plugin && npm link"
+  },
+  "engines": {
+    "node": ">=22.16"
+  }
+}

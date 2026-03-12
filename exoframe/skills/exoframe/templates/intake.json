@@ -1,0 +1,19 @@
+{
+  "_comment": "ExoFrame task intake template – copy and fill in before calling exoframe_run.",
+  "task": "Describe the primary goal in one sentence, e.g. 'Migrate all Jest tests to Vitest'",
+  "mode": "draft",
+  "context": {
+    "workspaceRoot": "/absolute/path/to/project",
+    "language": "TypeScript",
+    "framework": "Node.js",
+    "notes": "Any extra info that helps the pipeline make better decisions"
+  },
+  "constraints": [
+    "Do not modify files under src/legacy/",
+    "Keep all public API signatures unchanged"
+  ],
+  "files": [
+    "package.json",
+    "tsconfig.json"
+  ]
+}

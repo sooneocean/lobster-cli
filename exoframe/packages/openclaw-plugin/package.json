@@ -1,0 +1,33 @@
+{
+  "name": "@dexter/exoframe-openclaw",
+  "version": "0.1.0",
+  "description": "ExoFrame plugin for OpenClaw – registers tools, RPCs, and CLI entry points",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "openclaw.plugin.json"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "pack": "npm pack"
+  },
+  "dependencies": {
+    "@dexter/exoframe-core": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  },
+  "openclaw": {
+    "extensions": ["dist/index.js"]
+  }
+}

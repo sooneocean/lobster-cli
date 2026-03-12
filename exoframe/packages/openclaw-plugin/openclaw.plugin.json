@@ -1,0 +1,28 @@
+{
+  "id": "exoframe",
+  "name": "ExoFrame",
+  "version": "0.1.0",
+  "description": "Wraps models into executable task agents with a plan→execute→verify pipeline.",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "workspaceRoot": {
+        "type": "string",
+        "description": "Absolute path to the workspace root that ExoFrame may operate on."
+      },
+      "defaultMode": {
+        "type": "string",
+        "enum": ["draft", "execute", "review"],
+        "default": "execute",
+        "description": "Default execution mode when not specified by the caller."
+      },
+      "allowWrite": {
+        "type": "boolean",
+        "default": false,
+        "description": "Whether ExoFrame may write files during execution. Set true only for trusted workspaces."
+      }
+    },
+    "required": ["workspaceRoot"],
+    "additionalProperties": false
+  }
+}
